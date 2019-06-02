@@ -17,7 +17,7 @@ def main(filename, casesensitive):
     except:
         filename = input("\nPlease enter filename including extension\n")
         casesensitive = input("Case sensitive? (Y/N)")
-        main(filename, casesensitive)
+         main(filename, casesensitive)
 
 
 def calculateunigram(content, casesensitive):
@@ -43,10 +43,9 @@ def calculateunigram(content, casesensitive):
             if value == i:
                 print("p(", key, "=", i/numbertokens)
 
-    print(countedwords)
-
 
 def calculatebigram(content, casesensitive):
+    content = re.sub(r"[^\w ]", "", content)
     contentsplit = content.split()
     dictwords = {}
     lswordCombined = []
@@ -61,9 +60,12 @@ def calculatebigram(content, casesensitive):
         wordFormatted = "p(" + word2 + "|" + word1 + ")"
         if wordCombined not in lswordCombined:
             countword1 = re.findall(word1, content)
+            print(wordCombined)
             countwordcombined = re.findall(wordCombined, content)
             countwordcombined2 = re.findall(wordCombined2, content)
-            probabilityOfCounterWord = (len(countwordcombined) + len(countwordcombined2)) / len(countword1)
+            probabilityOfCounterWord= 0
+            if len(countword1) > 0:
+                probabilityOfCounterWord = (len(countwordcombined) + len(countwordcombined2)) / len(countword1)
             dictwords[wordFormatted] = probabilityOfCounterWord
             lswordCombined.append(wordCombined)
 
