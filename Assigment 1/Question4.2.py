@@ -132,7 +132,7 @@ def goodturingdiscount(nc):
 
     print("Good-Turing")
 
-    for i in range(1,maxnc):
+    for i in range(1, maxnc):
         if i <= kthreshold:
             if getNcValueFromRegressionline(i) == 0 or getNcValueFromRegressionline(kthreshold + 1):
                 newcnumerator = 0
@@ -149,6 +149,7 @@ def goodturingdiscount(nc):
         else:
             print("c:", i, "     c* =", i)
 
+
 def calculateRegressionLine(data):
     avgy = 0
     avgx = 0
@@ -158,7 +159,7 @@ def calculateRegressionLine(data):
     for key, value in data.items():
         avgx += key
         avgy += value
-        avgxy == key*value
+        avgxy += key*value
         avgxsqrd += key**2
 
     avgx = avgx / len(data)
