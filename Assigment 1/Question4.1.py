@@ -57,11 +57,13 @@ def calculatebigram(content, casesensitive):
         word1 = contentsplit[i]
         word2 = contentsplit[i + 1]
         wordCombined = word1 + " " + word2
-        wordFormatted = "p("+word2 + "|" + word1 + ")"
+        wordCombined2 = word1 + "\n" + word2
+        wordFormatted = "p(" + word2 + "|" + word1 + ")"
         if wordCombined not in lswordCombined:
             countword1 = re.findall(word1, content)
-            countwordcombined = re.findall(word2, content)
-            probabilityOfCounterWord = len(countwordcombined)/len(countword1)
+            countwordcombined = re.findall(wordCombined, content)
+            countwordcombined2 = re.findall(wordCombined2, content)
+            probabilityOfCounterWord = (len(countwordcombined) + len(countwordcombined2)) / len(countword1)
             dictwords[wordFormatted] = probabilityOfCounterWord
             lswordCombined.append(wordCombined)
 
