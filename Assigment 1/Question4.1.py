@@ -21,8 +21,9 @@ def main(filename, casesensitive):
 
 
 def calculateunigram(content, casesensitive):
-    words = re.findall(r'\w+', content, flags=re.IGNORECASE)
-    if casesensitive == "Y":
+    words = re.findall(r'\w+', content)
+    if casesensitive == "N":
+        content = content.upper()
         words = re.findall(r'\w+', content)
 
     countedwords = Counter(words)
@@ -42,11 +43,15 @@ def calculateunigram(content, casesensitive):
             if value == i:
                 print("p(", key, "=", i/numbertokens)
 
+    print(countedwords)
+
 
 def calculatebigram(content, casesensitive):
     contentsplit = content.split()
     dictwords = {}
     lswordCombined = []
+    if casesensitive == "N":
+        content = content.upper()
 
     for i in range(len(contentsplit) - 1):
         word1 = contentsplit[i]
@@ -54,13 +59,8 @@ def calculatebigram(content, casesensitive):
         wordCombined = word1 + " " + word2
         wordFormatted = "p("+word2 + "|" + word1 + ")"
         if wordCombined not in lswordCombined:
-            countword1 = re.findall(word1, content, flags=re.IGNORECASE)
-            countwordcombined = re.findall(word2, content, flags=re.IGNORECASE)
-
-            if casesensitive == "Y":
-                countword1 = re.findall(word1, content)
-                countwordcombined = re.findall(word2, content)
-
+            countword1 = re.findall(word1, content)
+            countwordcombined = re.findall(word2, content)
             probabilityOfCounterWord = len(countwordcombined)/len(countword1)
             dictwords[wordFormatted] = probabilityOfCounterWord
             lswordCombined.append(wordCombined)
