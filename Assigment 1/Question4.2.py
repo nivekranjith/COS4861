@@ -52,6 +52,7 @@ def calculateunigram(content, casesensitive):
 
 
 def calculatebigram(content, casesensitive):
+    content = re.sub(r"[^A-Za-z ]", "", content)
     if casesensitive == "N":
         content = content.upper()
 
@@ -70,31 +71,33 @@ def calculatebigram(content, casesensitive):
         word2 = contentsplit[i + 1]
         wordCombined = word1 + " " + word2
         wordCombined2 = word1 + "\n" + word2
-        wordCombined3  = "("+ word1 + "|" + word2 + ")"
+        wordCombined3  = "(" + word1 + "|" + word2 + ")"
         wordFormatted = "p("+word2 + "|" + word1 + ")"
         if wordCombined not in lswordCombined:
             countword1 = re.findall(word1, content)
             countwordcombined = re.findall(wordCombined, content)
             countwordcombined2 = re.findall(wordCombined2, content)
-            probabilityOfCounterWord = (len(countwordcombined) + len(countwordcombined2))/len(countword1)
-            dictwords[wordFormatted] = probabilityOfCounterWord
-            lswordCombined.append(wordCombined)
-            if not nc.get(len(countwordcombined) + len(countwordcombined2)):
-                nc[len(countwordcombined)+ len(countwordcombined2)] = 0
-            nc[len(countwordcombined)+ len(countwordcombined2)] += 1
-            laplace[wordCombined3] = {len(countwordcombined) + len(countwordcombined2): len(countword1)}
+            if len(countword1) > 0:
+                probabilityOfCounterWord = (len(countwordcombined) + len(countwordcombined2))/len(countword1)
+                dictwords[wordFormatted] = probabilityOfCounterWord
+                lswordCombined.append(wordCombined)
+                if not nc.get(len(countwordcombined) + len(countwordcombined2)):
+                    nc[len(countwordcombined)+ len(countwordcombined2)] = 0
+                nc[len(countwordcombined)+ len(countwordcombined2)] += 1
+                laplace[wordCombined3] = {len(countwordcombined) + len(countwordcombined2): len(countword1)}
 
     dictwords = sorted(dictwords.items(), key=operator.itemgetter(1))
 
     print("\nBigram:")
     print("In order of most occurrences")
 
-    for i in range(len(dictwords)):
+    for i in range(len(dictwords) - 1, 0, -1):
         print(dictwords[i][0], "=   ", dictwords[i][1])
 
     print("len", len(countedwords))
     laplacediscountBigram(laplace, len(countedwords))
     goodturingdiscount(nc)
+
 
 def laplacediscount(data , vocabnumber):
     print("Laplace")
@@ -134,7 +137,7 @@ def goodturingdiscount(nc):
 
     for i in range(1, maxnc):
         if i <= kthreshold:
-            if getNcValueFromRegressionline(i) == 0 or getNcValueFromRegressionline(kthreshold + 1):
+            if getNcValueFromRegressionline(i) == 0 or getNcValueFromRegressionline(kthreshold + 1) == 0:
                 newcnumerator = 0
             else:
                 newcnumerator = ((i + 1)*(getNcValueFromRegressionline(i+1)/getNcValueFromRegressionline(i))) / - i*((kthreshold + 1) * getNcValueFromRegressionline(kthreshold + 1))
