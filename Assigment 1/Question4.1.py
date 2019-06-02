@@ -17,7 +17,7 @@ def main(filename, casesensitive):
     except:
         filename = input("\nPlease enter filename including extension\n")
         casesensitive = input("Case sensitive? (Y/N)")
-         main(filename, casesensitive)
+        main(filename, casesensitive)
 
 
 def calculateunigram(content, casesensitive):
@@ -45,7 +45,7 @@ def calculateunigram(content, casesensitive):
 
 
 def calculatebigram(content, casesensitive):
-    content = re.sub(r"[^\w ]", "", content)
+    content = re.sub(r"[^A-Za-z ]", "", content)
     contentsplit = content.split()
     dictwords = {}
     lswordCombined = []
@@ -60,21 +60,19 @@ def calculatebigram(content, casesensitive):
         wordFormatted = "p(" + word2 + "|" + word1 + ")"
         if wordCombined not in lswordCombined:
             countword1 = re.findall(word1, content)
-            print(wordCombined)
             countwordcombined = re.findall(wordCombined, content)
             countwordcombined2 = re.findall(wordCombined2, content)
-            probabilityOfCounterWord= 0
             if len(countword1) > 0:
                 probabilityOfCounterWord = (len(countwordcombined) + len(countwordcombined2)) / len(countword1)
-            dictwords[wordFormatted] = probabilityOfCounterWord
-            lswordCombined.append(wordCombined)
+                dictwords[wordFormatted] = probabilityOfCounterWord
+                lswordCombined.append(wordCombined)
 
     dictwords = sorted(dictwords.items(), key=operator.itemgetter(1))
 
     print("\nBigram:")
     print("In order of most occurrences")
 
-    for i in range(len(dictwords)):
+    for i in range(len(dictwords) - 1, 0, -1):
         print(dictwords[i][0], "=", dictwords[i][1])
 
 
