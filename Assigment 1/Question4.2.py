@@ -21,15 +21,15 @@ def main(filename, casesensitive):
 
 
 def calculateunigram(content, casesensitive):
-    words = re.findall(r'\w+', content)
     if casesensitive == "N":
         content = content.upper()
-        words = re.findall(r'\w+', content)
+    words = re.findall(r'\w+', content)
 
     countedwords = Counter(words)
     numbertokens = 0
     maxoccurencenumber = 0
     nc = {}
+    laplace = {}
     sorted_x = sorted(countedwords.items(), key=operator.itemgetter(1))
     for key, value in countedwords.items():
         numbertokens += value
@@ -40,13 +40,14 @@ def calculateunigram(content, casesensitive):
     print("In order of most occurrences")
     for i in range(maxoccurencenumber, 0, -1):
         for key, value in countedwords.items():
-            numbertokens += value
             if value == i:
                 print("p(", key, ") =   ", i/numbertokens)
                 if not nc.get(i):
                     nc[i] = 0
                 nc[i] += 1
+                laplace[i] = numbertokens
 
+    laplacediscount(laplace, len(countedwords))
     goodturingdiscount(nc)
 
 
@@ -55,26 +56,33 @@ def calculatebigram(content, casesensitive):
         content = content.upper()
 
     contentsplit = content.split()
+
+    words = re.findall(r'\w+', content)
+    countedwords = Counter(words)
+
     dictwords = {}
     lswordCombined = []
-    nc= {}
+    nc = {}
+    laplace = {}
 
     for i in range(len(contentsplit) - 1):
         word1 = contentsplit[i]
         word2 = contentsplit[i + 1]
         wordCombined = word1 + " " + word2
         wordCombined2 = word1 + "\n" + word2
+        wordCombined3  = "("+ word1 + "|" + word2 + ")"
         wordFormatted = "p("+word2 + "|" + word1 + ")"
         if wordCombined not in lswordCombined:
             countword1 = re.findall(word1, content)
             countwordcombined = re.findall(wordCombined, content)
             countwordcombined2 = re.findall(wordCombined2, content)
-            probabilityOfCounterWord = (len(countwordcombined)+ len(countwordcombined2))/len(countword1)
+            probabilityOfCounterWord = (len(countwordcombined) + len(countwordcombined2))/len(countword1)
             dictwords[wordFormatted] = probabilityOfCounterWord
             lswordCombined.append(wordCombined)
             if not nc.get(len(countwordcombined) + len(countwordcombined2)):
                 nc[len(countwordcombined)+ len(countwordcombined2)] = 0
             nc[len(countwordcombined)+ len(countwordcombined2)] += 1
+            laplace[wordCombined3] = {len(countwordcombined) + len(countwordcombined2): len(countword1)}
 
     dictwords = sorted(dictwords.items(), key=operator.itemgetter(1))
 
@@ -83,20 +91,36 @@ def calculatebigram(content, casesensitive):
 
     for i in range(len(dictwords)):
         print(dictwords[i][0], "=   ", dictwords[i][1])
+
+    print("len", len(countedwords))
+    laplacediscountBigram(laplace, len(countedwords))
     goodturingdiscount(nc)
+
+def laplacediscount(data , vocabnumber):
+    print("Laplace")
+
+    listdict = list(data.keys())
+    listdict.sort()
+
+    for i in range(len(listdict)):
+        print("c:", listdict[i], "      c* = ", (listdict[i]+1)*( data[listdict[i]]/(data[listdict[i]]+vocabnumber)))
+
+def laplacediscountBigram(data , vocabnumber):
+    print("Laplace")
+
+    for key,value in data.items():
+        for key2, value2 in value.items():
+            print("c", key, "      c* = ",
+                  ((key2 + 1) * value2)/(value2 + vocabnumber))
 
 
 def goodturingdiscount(nc):
-    for key, value in nc.items():
-        maxnc = key
-        break
 
     global kthreshold
     lognc = {}
     listc = list(nc.keys())
     listc.sort()
-
-    counter = 0
+    maxnc = listc[len(listc) -1]
 
     for i in range(len(listc)):
         if i == 0 or i == len(listc) - 1:
