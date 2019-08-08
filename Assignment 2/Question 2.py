@@ -4,13 +4,32 @@ def main(filename):
         if f.mode == 'r':
             contents = f.read()
             findargmax(contents)
-            main()
         else:
             print("File not found")
 
     except:
-        filename = input("\nPlease enter filename including extension\n")
+        filename = input("\nPlease enter training filename including extension\n")
         main(filename)
+
+def assignTagSet(filename):
+    try:
+        f = open(filename, "r")
+        if f.mode == 'r':
+            contents = f.read()
+            spacesplit = contents.split()
+            for x in spacesplit:
+                if not x.lower() in dictwordstagmap:
+                    print(x,"/NN")
+                else:
+                    print(x,"/",dictwordstagmap[x.lower()])
+
+
+        else:
+            print("File not found")
+
+    except:
+        filename = input("\nPlease enter second filename including extension\n")
+        assignTagSet(filename)
 
 
 def findargmax(contents):
@@ -33,7 +52,11 @@ def findargmax(contents):
                 tagName = tagcount
 
         print(x,"-",tagName)
+        dictwordstagmap[x.lower()] = tagName
 
+    filename = input("\nPlease enter second filename including extension\n")
+    assignTagSet(filename)
 
-filename = input("Please enter filename including extension\n")
+dictwordstagmap ={}
+filename = input("Please enter training filename including extension\n")
 main(filename)
