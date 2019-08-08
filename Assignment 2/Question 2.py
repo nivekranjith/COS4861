@@ -15,15 +15,19 @@ def assignTagSet(filename):
     try:
         f = open(filename, "r")
         if f.mode == 'r':
+            datatowrite = ""
             contents = f.read()
             spacesplit = contents.split()
             for x in spacesplit:
                 if not x.lower() in dictwordstagmap:
-                    print(x,"/NN")
+                    datatowrite += x + "/NN "
                 else:
-                    print(x,"/",dictwordstagmap[x.lower()])
+                    datatowrite += x + "/" + dictwordstagmap[x.lower()] + " "
 
-
+            f = open(filename + "_tagged.txt", "w")
+            f.write(datatowrite)
+            f.close()
+            print("Tagging written to " + filename + "_tagged.txt")
         else:
             print("File not found")
 
